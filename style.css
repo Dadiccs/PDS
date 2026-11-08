@@ -162,24 +162,21 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
    animati dentro overflow:hidden, quindi niente deve sporgere. */
 .shade {
   position: absolute;
-  inset: 0;
+  inset: 0;                  /* copre anche il px di sovrapposizione: niente righe chiare */
   opacity: 0;
   pointer-events: none;
   background-repeat: no-repeat;
-  background-size: 50cqw 100%;
-  background-position: calc(var(--o) * -12.5cqw) 0;
+  /* gradiente largo quanto la pagina intera (4 strisce), spostato
+     sulla fetta giusta. In percentuale e non in cqw: Safari su iOS
+     non gestisce bene cqw negli sfondi. */
+  background-size: calc(400% - 4px) 100%;
+  background-position: calc(var(--o) * 100% / 3) 0;
 }
 .front > .shade { background-image: linear-gradient(to right, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
 .back > .shade { background-image: linear-gradient(to left, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
 .turn-fwd .shade,
 .turn-back .shade { animation: shade var(--flip) ease-in-out; }
 @keyframes shade { 50% { opacity: 1; } }
-
-/* su telefoni e tablet Safari mostra l'ombra a "blocchi" per ogni
-   striscia: lì teniamo solo la piega, senza ombreggiatura */
-@media (max-width: 640px), (pointer: coarse) {
-  .shade { display: none; }
-}
 
 .slice.paper.front {
   border-radius: 0 2px 2px 0;
