@@ -182,6 +182,12 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .turn-back .shade { animation: shade var(--flip) ease-in-out; }
 @keyframes shade { 50% { opacity: 1; } }
 
+/* su telefoni e tablet (Safari) l'ombra si vede a rettangoli:
+   lì teniamo solo la piega */
+@media (max-width: 640px), (pointer: coarse) {
+  .shade { display: none; }
+}
+
 .slice.paper.front {
   border-radius: 0 2px 2px 0;
   background: linear-gradient(to right, rgba(0,0,0,.06), rgba(0,0,0,0) 6%), var(--paper);
