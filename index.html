@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>La Parola della Settimana</title>
+  <meta name="description" content="Una parola ogni settimana, da qui alla consegna della tesi.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="top">
+    <span>La Parola della Settimana</span>
+    <button class="link" id="infoBtn" aria-haspopup="dialog">Info</button>
+  </header>
+
+  <main class="stage">
+    <div class="book-wrap">
+      <div class="book closed" id="book" role="region" aria-label="Libro delle parole"></div>
+    </div>
+
+    <div class="controls">
+      <button class="nav" id="prevBtn" aria-label="Pagina precedente">&larr;</button>
+      <nav class="index" id="index" aria-label="Settimane"></nav>
+      <button class="nav" id="nextBtn" aria-label="Pagina successiva">&rarr;</button>
+    </div>
+
+    <p class="sr-only" id="status" aria-live="polite"></p>
+  </main>
+
+  <dialog id="infoDialog" aria-labelledby="infoTitle">
+    <button class="link close" id="closeInfo" aria-label="Chiudi">Chiudi</button>
+    <h2 id="infoTitle">La Parola della Settimana</h2>
+    <p>Tre compagni di classe, una parola all'inizio di ogni settimana, scelte democraticamente dalla classe.</p>
+    <p>Chissà che un giorno prenda vita sul serio</p>
+    <p class="how">Il libro si apre sulla parola di questa settimana. Sfoglialo con le frecce, cliccando sulle pagine o scorrendo col dito.</p>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
