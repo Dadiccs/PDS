@@ -260,6 +260,11 @@ function startSpread() {
   return Math.max(1, Math.min(NOW, N + 1)); // settimana corrente o "in arrivo"
 }
 
+/* larghezza di una pagina in px, per l'ombreggiatura delle strisce */
+function measure() { book.style.setProperty("--pw", book.offsetWidth / 2 + "px"); }
+measure();
+window.addEventListener("resize", measure);
+
 updateUI();
 const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
 fontsReady.then(() => setTimeout(() => goTo(startSpread()), REDUCED ? 0 : 800));

@@ -162,15 +162,19 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
    animati dentro overflow:hidden, quindi niente deve sporgere. */
 .shade {
   position: absolute;
-  inset: 0;                  /* copre anche il px di sovrapposizione: niente righe chiare */
+  inset: 0;
   opacity: 0;
   pointer-events: none;
+  /* Safari: un livello animato non eredita backface-visibility dal
+     genitore, quindi va ripetuto qui, altrimenti durante il giro si
+     vedono le ombre del retro come rettangoli grigi */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* gradiente largo una pagina intera (--pw in px, calcolata in JS),
+     spostato sulla fetta di questa striscia */
   background-repeat: no-repeat;
-  /* gradiente largo quanto la pagina intera (4 strisce), spostato
-     sulla fetta giusta. In percentuale e non in cqw: Safari su iOS
-     non gestisce bene cqw negli sfondi. */
-  background-size: calc(400% - 4px) 100%;
-  background-position: calc(var(--o) * 100% / 3) 0;
+  background-size: var(--pw, 400%) 100%;
+  background-position: calc(var(--o) * var(--pw, 0px) / -4) 0;
 }
 .front > .shade { background-image: linear-gradient(to right, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
 .back > .shade { background-image: linear-gradient(to left, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
