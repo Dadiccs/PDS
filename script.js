@@ -107,8 +107,8 @@ function strip(k, front, back, inner) {
   // per mostrare solo la fetta giusta (sul retro è specchiato)
   return `
     <div class="seg" style="--k:${k}">
-      <div class="face front"><div class="slice ${front.cls} front" style="--o:${k}">${front.html}</div></div>
-      <div class="face back"><div class="slice ${back.cls} back" style="--o:${STRIPS - 1 - k}">${back.html}</div></div>
+      <div class="face front" style="--o:${k}"><div class="slice ${front.cls} front">${front.html}</div><div class="shade"></div></div>
+      <div class="face back" style="--o:${STRIPS - 1 - k}"><div class="slice ${back.cls} back">${back.html}</div><div class="shade"></div></div>
       ${inner}
     </div>`;
 }

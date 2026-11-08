@@ -156,18 +156,23 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 @keyframes bend-fwd { 50% { transform: rotateY(-11deg); } }
 @keyframes bend-back { 50% { transform: rotateY(11deg); } }
 
-/* ombreggiatura che segue la curva: un unico gradiente su tutta la pagina */
-.slice::after {
-  content: "";
+/* ombreggiatura che segue la curva.
+   Ogni striscia ha il suo pezzo di gradiente, grande esattamente
+   quanto la striscia: Safari su iOS non ritaglia bene i livelli
+   animati dentro overflow:hidden, quindi niente deve sporgere. */
+.shade {
   position: absolute;
   inset: 0;
   opacity: 0;
   pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: 50cqw 100%;
+  background-position: calc(var(--o) * -12.5cqw) 0;
 }
-.slice.front::after { background: linear-gradient(to right, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
-.slice.back::after { background: linear-gradient(to left, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
-.turn-fwd .slice::after,
-.turn-back .slice::after { animation: shade var(--flip) ease-in-out; }
+.front > .shade { background-image: linear-gradient(to right, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
+.back > .shade { background-image: linear-gradient(to left, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
+.turn-fwd .shade,
+.turn-back .shade { animation: shade var(--flip) ease-in-out; }
 @keyframes shade { 50% { opacity: 1; } }
 
 .slice.paper.front {
@@ -325,7 +330,7 @@ dialog .how {
 /* ---------- smartphone: sempre due pagine ---------- */
 
 @media (max-width: 640px) {
-  :root { --bw: min(96vw, calc((100svh - 200px) * 1.43)); }
+  :root { --bw: min(88vw, calc((100svh - 200px) * 1.43)); }
   .stage { gap: 26px; }
   .pg { padding: 5.5cqw; }
   .meta { font-size: max(8px, 1.9cqw); }
@@ -335,5 +340,5 @@ dialog .how {
 
 @media (prefers-reduced-motion: reduce) {
   :root { --flip: .01s; }
-  .seg, .slice::after { animation: none !important; }
+  .seg, .shade { animation: none !important; }
 }
