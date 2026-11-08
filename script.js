@@ -5,7 +5,7 @@
    ========================================================== */
 
 // Lunedì della settimana 1 (AAAA-MM-GG)
-const START_DATE = "2026-10-05";
+const START_DATE = "2026-09-28";
 
 const PAROLE = [
   "Pioda",
