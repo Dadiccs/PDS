@@ -9,6 +9,7 @@ const START_DATE = "2026-10-05";
 
 const PAROLE = [
   "Pioda",
+  "Trofie",
   "Patacca",
   "Granciporro",
   "Mellifluo",
