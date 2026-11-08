@@ -1,5 +1,5 @@
 /* ==========================================================
-   La Parola della Settimana — v2
+   La Parola della Settimana — v3
    Per aggiungere una parola: aggiungila in fondo a PAROLE.
    La posizione nell'elenco = numero della settimana.
    ========================================================== */
@@ -97,13 +97,29 @@ const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const statusEl = document.getElementById("status");
 
+/* Ogni foglio è fatto di STRIPS strisce verticali annidate:
+   durante il giro ognuna ruota un po' rispetto alla precedente,
+   così la pagina si piega invece di restare rigida. */
+const STRIPS = 4;
+
+function strip(k, front, back, inner) {
+  // il contenuto è largo una pagina intera e viene spostato
+  // per mostrare solo la fetta giusta (sul retro è specchiato)
+  return `
+    <div class="seg" style="--k:${k}">
+      <div class="face front"><div class="slice ${front.cls} front" style="--o:${k}">${front.html}</div></div>
+      <div class="face back"><div class="slice ${back.cls} back" style="--o:${STRIPS - 1 - k}">${back.html}</div></div>
+      ${inner}
+    </div>`;
+}
+
 const leaves = spreads.map((s, i) => {
   const back = spreads[i + 1] ? spreads[i + 1].left : backCover;
   const leaf = document.createElement("div");
   leaf.className = "leaf";
-  leaf.innerHTML = `
-    <div class="face front ${s.right.cls}">${s.right.html}</div>
-    <div class="face back ${back.cls}">${back.html}</div>`;
+  let html = "";
+  for (let k = STRIPS - 1; k >= 0; k--) html = strip(k, s.right, back, html);
+  leaf.innerHTML = html;
   book.appendChild(leaf);
   return leaf;
 });
@@ -156,12 +172,19 @@ function goTo(target, { instant = false } = {}) {
       leaf._t1 = setTimeout(() => {
         // prima metà del giro: ordine del lato di partenza
         leaf.style.zIndex = forward ? 1000 + (L - i) : 1000 + i;
+        // piega: riavvia l'animazione delle strisce
+        leaf.classList.remove("turn-fwd", "turn-back");
+        void leaf.offsetWidth;
+        leaf.classList.add(forward ? "turn-fwd" : "turn-back");
         leaf.classList.toggle("flipped", forward);
         // seconda metà: ordine del lato di arrivo
         leaf._t2 = setTimeout(() => {
           leaf.style.zIndex = forward ? 2000 + i : 2000 + (L - i);
         }, FLIP_MS / 2);
-        leaf._t3 = setTimeout(() => settle(i), FLIP_MS + 20);
+        leaf._t3 = setTimeout(() => {
+          leaf.classList.remove("turn-fwd", "turn-back");
+          settle(i);
+        }, FLIP_MS + 20);
       }, k * stagger);
     });
   }

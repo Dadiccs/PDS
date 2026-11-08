@@ -1,4 +1,4 @@
-/* La Parola della Settimana — v2 */
+/* La Parola della Settimana — v3 */
 
 *,
 *::before,
@@ -91,7 +91,22 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 .book.closed { transform: translateX(-25%); }
 .book.at-end { transform: translateX(25%); }
 .book.no-anim,
-.book.no-anim .leaf { transition: none !important; }
+.book.no-anim /* ombra sotto le pagine ferme (sinistra / destra) */
+.book::before,
+.book::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  box-shadow: 0 1cqw 2.5cqw -1cqw rgba(0, 0, 0, .22);
+  transition: opacity var(--flip);
+  pointer-events: none;
+}
+.book::before { left: 0; border-radius: 3px 0 0 3px; }
+.book::after { left: 50%; border-radius: 0 3px 3px 0; }
+.book.closed::before,
+.book.at-end::after { opacity: 0; }
 
 .leaf {
   position: absolute;
@@ -105,31 +120,71 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .leaf.flipped { transform: rotateY(-180deg); }
 
+/* strisce annidate: ognuna parte dal bordo destro della precedente */
+.seg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 25%;               /* 100% / STRIPS */
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+}
+.seg .seg { left: 100%; width: 100%; }
+
 .face {
   position: absolute;
-  inset: 0;
+  inset: 0 -1px 0 0;        /* 1px di sovrapposizione: niente fessure */
   overflow: hidden;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  box-shadow: 0 1cqw 2.5cqw -1cqw rgba(0, 0, 0, .18);
 }
 .face.back { transform: rotateY(180deg); }
 
-.face.front.paper {
+/* la fetta di pagina visibile in questa striscia */
+.slice {
+  position: absolute;
+  top: 0;
+  left: calc(var(--o) * -12.5cqw);   /* 50cqw / STRIPS */
+  width: 50cqw;
+  height: 100%;
+}
+
+/* piega durante il giro */
+.turn-fwd .seg .seg { animation: bend-fwd var(--flip) ease-in-out; }
+.turn-back .seg .seg { animation: bend-back var(--flip) ease-in-out; }
+@keyframes bend-fwd { 50% { transform: rotateY(-11deg); } }
+@keyframes bend-back { 50% { transform: rotateY(11deg); } }
+
+/* ombreggiatura che segue la curva: un unico gradiente su tutta la pagina */
+.slice::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.slice.front::after { background: linear-gradient(to right, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
+.slice.back::after { background: linear-gradient(to left, rgba(0,0,0,0) 15%, rgba(0,0,0,.13)); }
+.turn-fwd .slice::after,
+.turn-back .slice::after { animation: shade var(--flip) ease-in-out; }
+@keyframes shade { 50% { opacity: 1; } }
+
+.slice.paper.front {
   border-radius: 0 2px 2px 0;
   background: linear-gradient(to right, rgba(0,0,0,.06), rgba(0,0,0,0) 6%), var(--paper);
 }
-.face.back.paper {
+.slice.paper.back {
   border-radius: 2px 0 0 2px;
   background: linear-gradient(to left, rgba(0,0,0,.06), rgba(0,0,0,0) 6%), var(--paper);
 }
 
-.face.cover { background: var(--cover); color: #f4f4f1; }
-.face.front.cover {
+.slice.cover { color: #f4f4f1; }
+.slice.cover.front {
   border-radius: 0 3px 3px 0;
   background: linear-gradient(to right, rgba(255,255,255,.07), rgba(255,255,255,0) 3%), var(--cover);
 }
-.face.back.cover {
+.slice.cover.back {
   border-radius: 3px 0 0 3px;
   background: linear-gradient(to left, rgba(255,255,255,.07), rgba(255,255,255,0) 3%), var(--cover);
 }
@@ -164,8 +219,8 @@ button { font: inherit; color: inherit; background: none; border: none; cursor: 
 }
 .word.soon { color: var(--muted); font-style: italic; }
 
-/* sullo smartphone si vede solo la pagina destra: lì serve la meta */
-.word-pg .meta { display: none; position: absolute; top: 4.4cqw; left: 4.4cqw; text-align: left; }
+/* la meta della pagina destra serve solo sulla copertina dei numeri */
+.word-pg .meta { display: none; }
 
 /* copertine */
 .cover-pg { justify-content: flex-end; }
@@ -267,17 +322,18 @@ dialog .how {
   color: var(--muted);
 }
 
-/* ---------- smartphone: una pagina alla volta ---------- */
+/* ---------- smartphone: sempre due pagine ---------- */
 
 @media (max-width: 640px) {
-  :root { --bw: min(168vw, calc((100svh - 220px) * 1.43)); }
-  .book,
-  .book.closed { transform: translateX(-25%); }
-  .book.at-end { transform: translateX(25%); }
-  .word-pg .meta { display: block; }
-  .word { font-size: min(7.5cqw, calc(80cqw / var(--len, 8))); }
+  :root { --bw: min(96vw, calc((100svh - 200px) * 1.43)); }
+  .stage { gap: 26px; }
+  .pg { padding: 5.5cqw; }
+  .meta { font-size: max(8px, 1.9cqw); }
+  .word { font-size: min(8cqw, calc(84cqw / var(--len, 8))); }
+  .cover-title { font-size: 4.6cqw; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root { --flip: .01s; }
+  .seg, .slice::after { animation: none !important; }
 }
