@@ -13,7 +13,8 @@ const PAROLE = [
   "Patacca",
   "Granciporro",
   "Mellifluo",
-  "Pappardella"
+  "Pappardella",
+  "Capitombolo"
 ];
 
 /* ========================================================== */
