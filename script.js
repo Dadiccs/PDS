@@ -15,7 +15,8 @@ const PAROLE = [
   "Mellifluo",
   "Pappardella",
   "Capitombolo",
-  "Bulbiforme"
+  "Bulbiforme",
+  "Potare"
 ];
 
 /* ========================================================== */
